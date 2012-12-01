@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html;utf-8">
+  <title>Moodboard</title>
+  <style>
+  body,
+  html,
+  #board {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+  #board {
+    background-color: #000;
+    position: relative;
+  }
+  #dropMessage {
+    background-color: #fff;
+    border-radius: 15px;
+    font-family: sans-serif;
+    display: none;
+    font-size: 72px;
+    height: 250px;
+    left: 50%;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    width: 400px;
+  }
+  #board > div {
+    background-color: #fcc;
+    height: 200px;
+    position: absolute;
+    width: 250px;
+  }
+  </style>
+</head>
+<body>
+  <article id="board">
+    <section id="dropMessage">
+      Drop here!
+    </section>
+  </article>
+  <script src="moodboard.js"></script>
+</body>
