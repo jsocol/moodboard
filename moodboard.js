@@ -5,6 +5,9 @@ function p(e) {
 }
 
 var dragCurrent = false;
+var selected = false;
+var pins = [];
+
 function dragStart(e) {
     p(e);
     var obj = e.target;
@@ -64,6 +67,32 @@ function dragDrop(e) {
         dropped.textContent = text;
     }
     board.appendChild(dropped);
+    dropped.style.zIndex = pins.length;
+    pins.push(dropped);
+}
+
+function mouseDown(e) {
+    var obj = e.target;
+    if (selected) {
+        selected.classList.remove('selected');
+        selected = false;
+    }
+    while(obj.parentNode && obj.nodeName.toLowerCase() != 'div')
+        obj = obj.parentNode;
+    if (obj.nodeName.toLowerCase() != 'div' && selected) {
+        selected.classList.remove('selected');
+        selected = false;
+        return;
+    }
+    if (obj.nodeName.toLowerCase() != 'div') return;
+    selected = obj;
+    selected.classList.add('selected');
+    var idx = pins.indexOf(selected);
+    pins.splice(idx, 1);
+    pins.push(selected);
+    pins.forEach(function(el, i) {
+        el.style.zIndex = i;
+    });
 }
 
 function mouseMove(e) {
@@ -88,6 +117,35 @@ function dragEnd(e) {
     dragCurrent = false;
 }
 
+function keyDown(e) {
+    var LEFT = 37,
+        RIGHT = 39,
+        DELETE = 46;
+    if (!selected) return;
+    var k = e.keyCode;
+    if (selected.rotate == undefined)
+        selected.rotate = 0;
+    var handled = true;
+    switch(k) {
+        case LEFT:
+            selected.rotate--;
+            break;
+        case RIGHT:
+            selected.rotate++;
+            break;
+        case DELETE:
+            selected.parentNode.removeChild(selected);
+            selected = false;
+            break;
+        default:
+            handled = false;
+    }
+    if (handled)
+        p(e);
+    if (selected)
+        selected.style.transform = 'rotate(' + selected.rotate + 'deg)';
+}
+
 function $(sel) {
     return document.querySelectorAll(sel);
 }
@@ -98,8 +156,10 @@ board.addEventListener('dragstart', dragStart, false);
 board.addEventListener('dragenter', dragEnter, false);
 board.addEventListener('dragover', p, false);
 board.addEventListener('drop', dragDrop, false);
+board.addEventListener('mousedown', mouseDown, false);
 board.addEventListener('mousemove', mouseMove, false);
 board.addEventListener('mouseup', mouseUp, false);
+window.addEventListener('keydown', keyDown, false);
 
 var msg = $('#dropMessage')[0];
 
