@@ -6,7 +6,62 @@ function p(e) {
 
 var dragCurrent = false;
 var selected = false;
-var pins = [];
+
+function ObjectStack () {
+    this.objects = [];
+}
+
+ObjectStack.prototype.add = function(el) {
+    el.style.zIndex = this.objects.length;
+    this.objects.push(el);
+};
+
+ObjectStack.prototype.remove = function(el) {
+    var idx = this.objects.indexOf(el);
+    if (-1 == idx) return;
+    this.objects.splice(idx, 1);
+    this.zsort();
+};
+
+ObjectStack.prototype.zsort = function() {
+    this.objects.forEach(function(el, i) {
+        el.style.zIndex = i;
+    });
+};
+
+ObjectStack.prototype.bringToFront = function(el) {
+    var idx = this.objects.indexOf(el);
+    if (-1 == idx) return;
+    this.objects.splice(idx, 1);
+    this.objects.push(el);
+    this.zsort();
+};
+
+ObjectStack.prototype.sendToBack = function(el) {
+    var idx = this.objects.indexOf(el);
+    if (-1 == idx) return;
+    this.objects.splice(idx, 1);
+    this.objects.unshift(el);
+    this.zsort();
+};
+
+ObjectStack.prototype.bringForward = function(el) {
+    var idx = this.objects.indexOf(el);
+    if (-1 == idx || this.objects.length == idx - 1) return;
+    this.objects.splice(idx, 1);
+    this.objects.splice(idx + 1, 0, el);
+    this.zsort();
+};
+
+ObjectStack.prototype.sendBackward = function(el) {
+    var idx = this.objects.indexOf(el);
+    if (idx < 1) return;
+    this.objects.splice(idx, 1);
+    this.objects.splice(idx - 1, 0, el);
+    this.zsort();
+};
+
+var pins = new ObjectStack();
 
 function dragStart(e) {
     p(e);
@@ -68,7 +123,7 @@ function dragDrop(e) {
     }
     board.appendChild(dropped);
     dropped.style.zIndex = pins.length;
-    pins.push(dropped);
+    pins.add(dropped);
 }
 
 function mouseDown(e) {
@@ -87,12 +142,7 @@ function mouseDown(e) {
     if (obj.nodeName.toLowerCase() != 'div') return;
     selected = obj;
     selected.classList.add('selected');
-    var idx = pins.indexOf(selected);
-    pins.splice(idx, 1);
-    pins.push(selected);
-    pins.forEach(function(el, i) {
-        el.style.zIndex = i;
-    });
+    pins.bringToFront(selected);
 }
 
 function mouseMove(e) {
@@ -119,7 +169,9 @@ function dragEnd(e) {
 
 function keyDown(e) {
     var LEFT = 37,
+        UP = 38,
         RIGHT = 39,
+        DOWN = 40,
         DELETE = 46;
     if (!selected) return;
     var k = e.key || e.keyCode || e.which;
@@ -130,8 +182,14 @@ function keyDown(e) {
         case LEFT:
             selected.rotate--;
             break;
+        case UP:
+            pins.bringForward(selected);
+            break;
         case RIGHT:
             selected.rotate++;
+            break;
+        case DOWN:
+            pins.sendBackward(selected);
             break;
         case DELETE:
             selected.parentNode.removeChild(selected);
