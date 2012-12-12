@@ -122,7 +122,7 @@ function keyDown(e) {
         RIGHT = 39,
         DELETE = 46;
     if (!selected) return;
-    var k = e.keyCode;
+    var k = e.key || e.keyCode || e.which;
     if (selected.rotate == undefined)
         selected.rotate = 0;
     var handled = true;
@@ -142,8 +142,11 @@ function keyDown(e) {
     }
     if (handled)
         p(e);
-    if (selected)
-        selected.style.transform = 'rotate(' + selected.rotate + 'deg)';
+    if (selected) {
+        var rot = 'rotate(' + selected.rotate + 'deg)';
+        selected.style.transform = rot;
+        selected.style.webkitTransform = rot;
+    }
 }
 
 function $(sel) {
