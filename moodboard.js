@@ -7,29 +7,29 @@ function p(e) {
 var dragCurrent = false;
 var selected = false;
 
-function ObjectStack () {
+function PictureStack() {
     this.objects = [];
 }
 
-ObjectStack.prototype.add = function(el) {
+PictureStack.prototype.add = function(el) {
     el.style.zIndex = this.objects.length;
     this.objects.push(el);
 };
 
-ObjectStack.prototype.remove = function(el) {
+PictureStack.prototype.remove = function(el) {
     var idx = this.objects.indexOf(el);
     if (-1 == idx) return;
     this.objects.splice(idx, 1);
     this.zsort();
 };
 
-ObjectStack.prototype.zsort = function() {
+PictureStack.prototype.zsort = function() {
     this.objects.forEach(function(el, i) {
         el.style.zIndex = i;
     });
 };
 
-ObjectStack.prototype.bringToFront = function(el) {
+PictureStack.prototype.bringToFront = function(el) {
     var idx = this.objects.indexOf(el);
     if (-1 == idx) return;
     this.objects.splice(idx, 1);
@@ -37,7 +37,7 @@ ObjectStack.prototype.bringToFront = function(el) {
     this.zsort();
 };
 
-ObjectStack.prototype.sendToBack = function(el) {
+PictureStack.prototype.sendToBack = function(el) {
     var idx = this.objects.indexOf(el);
     if (-1 == idx) return;
     this.objects.splice(idx, 1);
@@ -45,7 +45,7 @@ ObjectStack.prototype.sendToBack = function(el) {
     this.zsort();
 };
 
-ObjectStack.prototype.bringForward = function(el) {
+PictureStack.prototype.bringForward = function(el) {
     var idx = this.objects.indexOf(el);
     if (-1 == idx || this.objects.length == idx - 1) return;
     this.objects.splice(idx, 1);
@@ -53,7 +53,7 @@ ObjectStack.prototype.bringForward = function(el) {
     this.zsort();
 };
 
-ObjectStack.prototype.sendBackward = function(el) {
+PictureStack.prototype.sendBackward = function(el) {
     var idx = this.objects.indexOf(el);
     if (idx < 1) return;
     this.objects.splice(idx, 1);
@@ -61,7 +61,7 @@ ObjectStack.prototype.sendBackward = function(el) {
     this.zsort();
 };
 
-var pins = new ObjectStack();
+var pins = new PictureStack();
 
 function dragStart(e) {
     p(e);
